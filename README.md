@@ -1,4 +1,8 @@
 termo_rs485
 ===========
 
-System of controling lights on a bicycle via wireles bar switches. (Atmel AVR)  Platform: Atmel AVR Compiler&amp;IDE: AVRStudio5 Author: Pavel Cherstvov
+Outdoor temperature probe + Modbus over RS485 protocol interface.
+(Atmel AVR)  
+Platform: Atmel 
+AVR Compiler&IDE: Eclipse + AVR Eclipse Plugin + AVR toolchain
+Author: Pavel Cherstvov
