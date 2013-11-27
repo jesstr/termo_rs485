@@ -2,11 +2,6 @@
 #define  DYNINDICATION_H
 
 
-#define DIGITS_COUNT 4 //����� ���������
-#define DIGIT_SWITCH_DELAY 200 //�������� ����� �������������� ���������, ���  
-#define DISPLAY_UPDATE_DELAY 10 //�������� ����� ������������ �������, ���  
-
-
 //��������� ����� LED-���������
 #define a_PIN PC5
 #define b_PIN PC4
@@ -155,15 +150,6 @@
 #define CH_NONE    All_OFF;		
 
 
-
-//����������� ����� ������ ��������
-#define NONE	100;
-#define GRAD	101;
-#define CEL		102;
-#define MINUS	103;
-
-
-
 //���������� �������
 #define a_ON a_PORT&=~(1<<a_PIN) 
 #define b_ON b_PORT&=~(1<<b_PIN) 
@@ -207,12 +193,6 @@
 				DIG2_PORT&=~(1<<DIG2_PIN);\
 				DIG3_PORT&=~(1<<DIG3_PIN);\
 				DIG1_PORT&=~(1<<DIG1_PIN); 
-
-
-
-void DI_IO_Init(void);
-
-void DI_DrawDisplay(void);
 
 
 #endif /* DYNINDICATION_H */

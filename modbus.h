@@ -99,6 +99,13 @@ BYTE  MODBUS_MAS[200]={
                             };
 */
 
+extern BYTE DOC_registers[]; // 1-9999, Discrete Output Coils (Read-Write) - �������� ������ (1 ���)
+
+extern BYTE DIC_registers[]; // 10001-19999, Discrete Input Contacts (Read-Only) - ���������� ����� (1 ���)
+
+extern BYTE AIR_registers[]; // 30001-39999, Analog Input Registers (Read-Only) - �������� ����� (16 ���)
+
+extern BYTE AOHR_registers[]; // 40001-49999, Analog Output Holding Registers (Read-Write) - �������� �������� (16 ���)
 
 
 void MODBUS1(void);

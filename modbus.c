@@ -1,7 +1,7 @@
 #include <util/delay.h>
 #include "modbus.h"
 #include "uart.h"
-#include "dynindication.h"
+//#include "dynindication.h"
 
 
 // ������� ������ slave-����������
