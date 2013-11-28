@@ -2,7 +2,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include "dynindication.h"
-#include "sevensegmentdisplay.h"
+//#include "sevensegmentdisplay.h"
 
 unsigned char DisplayBuffer[DIGITS_COUNT] = {0,0,0,0}; //������ ������������ ��������
 

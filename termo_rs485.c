@@ -2,7 +2,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include "sevensegmentdisplay.h"
+#include "dynindication.h"
 #include "OWIBitFunctions.h"
 #include "modbus.h"
 #include "temperature.h"
