@@ -1,28 +1,25 @@
-﻿
-#include <avr/io.h>
+﻿#include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "OWI/OWIBitFunctions.h"
 #include "dynindication.h"
-#include "OWIBitFunctions.h"
 #include "modbus.h"
 #include "temperature.h"
 
-
-unsigned char display_mode=0; //Определяет режим отображения температуры на индикаторе: 0 - с десятыми долями, 1 - без десятых долей
+unsigned char display_mode = 0; //Определяет режим отображения температуры на индикаторе: 0 - с десятыми долями, 1 - без десятых долей
 
 void Animation(void)
 {
-		PORTC&=~(1<<0);
+		PORTC &= ~(1<<0);
 		_delay_ms(50);
-		PORTC|=(1<<0);
-		PORTB&=~(1<<3);
+		PORTC |= (1<<0);
+		PORTB &= ~(1<<3);
 		_delay_ms(50);
-		PORTB|=(1<<3);
-		PORTB&=~(1<<4);
+		PORTB |= (1<<3);
+		PORTB &= ~(1<<4);
 		_delay_ms(50);
-       	PORTB|=(1<<4); 
+       	PORTB |= (1<<4);
 } //Animation(void)
-
 
 int main(void)
 {
@@ -42,15 +39,15 @@ int main(void)
 	
 	SWITCH_Receive;
 	
-	long CurrentTemperature;
+	long CurrentTemperature = 0;
 	float fTemperature;
-	BYTE *ptr;
+	float *ptr;
 	
     while(1)
     {	
 		DI_DrawDisplay();
 		_delay_us(DISPLAY_UPDATE_DELAY);	
-		if (GetTemperature()!=0xFFFF)
+		if (GetTemperature() != 0xFFFF)
 		{
 
 // 			DisplayBuffer[3]=GRAD;
@@ -64,38 +61,62 @@ int main(void)
 // 			DisplayBuffer[2]=GRAD;
 // 			DisplayBuffer[3]=CEL;
 
-			CurrentTemperature=Temperature_calc1();
+			CurrentTemperature = Temperature_calc1();
 			
 			switch (display_mode)
 			{	/* TODO wrap this realization to a function or separate file */
 				case 0: 
 				{
-					DisplayBuffer[1]=(CurrentTemperature/100)%10;
-					DisplayBuffer[2]=(CurrentTemperature/10)%10;
-					DisplayBuffer[3]=CurrentTemperature%10;
-					if (CurrentTemperature/100==0) { if (CurrentTemperature<0) {DisplayBuffer[0]=NONE; DisplayBuffer[1]=MINUS;}
-										else {DisplayBuffer[0]=NONE; DisplayBuffer[1]=NONE;} }					
-					else if (CurrentTemperature<0) {DisplayBuffer[0]=MINUS;}
-							 else {DisplayBuffer[0]=NONE;}
+					DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
+					DisplayBuffer[2] = (CurrentTemperature / 10) % 10;
+					DisplayBuffer[3] = CurrentTemperature % 10;
+					if (CurrentTemperature / 100 == 0) {
+						if (CurrentTemperature < 0) {
+							DisplayBuffer[0] = NONE;
+							DisplayBuffer[1] = MINUS;
+						}
+						else {
+							DisplayBuffer[0] = NONE;
+							DisplayBuffer[1] = NONE;
+						}
+					}
+					else if (CurrentTemperature < 0) {
+						DisplayBuffer[0] = MINUS;
+					}
+					else {
+						DisplayBuffer[0] = NONE;
+					}
 				}
 				case 1:
 				{
-					DisplayBuffer[1]=(CurrentTemperature/100)%10;
-					DisplayBuffer[2]=(CurrentTemperature/10)%10;
-					DisplayBuffer[3]=GRAD;	
-					if (CurrentTemperature/100==0) { if (CurrentTemperature<0) {DisplayBuffer[0]=NONE; DisplayBuffer[1]=MINUS;}
-										else {DisplayBuffer[0]=NONE; DisplayBuffer[1]=NONE;} }					
-					else if (CurrentTemperature<0) {DisplayBuffer[0]=MINUS;}
-							 else {DisplayBuffer[0]=NONE;}					
+					DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
+					DisplayBuffer[2] = (CurrentTemperature / 10) % 10;
+					DisplayBuffer[3] = GRAD;
+					if (CurrentTemperature / 100 == 0) {
+						if (CurrentTemperature < 0) {
+							DisplayBuffer[0] = NONE;
+							DisplayBuffer[1] = MINUS;
+						}
+						else {
+							DisplayBuffer[0] = NONE;
+							DisplayBuffer[1] = NONE;
+						}
+					}
+					else if (CurrentTemperature < 0) {
+						DisplayBuffer[0] = MINUS;
+					}
+					else {
+						DisplayBuffer[0] = NONE;
+					}
 				}
 			}			
 		}
-		fTemperature=(float)(CurrentTemperature/10);
-		ptr=&fTemperature;
-		AOHR_registers[1]=*ptr++;
-		AOHR_registers[0]=*ptr++;
-		AOHR_registers[3]=*ptr++;
-		AOHR_registers[2]=*ptr++;
+		fTemperature = (float) (CurrentTemperature / 10);
+		ptr = &fTemperature;
+		AOHR_registers[1] = *ptr++;
+		AOHR_registers[0] = *ptr++;
+		AOHR_registers[3] = *ptr++;
+		AOHR_registers[2] = *ptr++;
 		MODBUS1();		
     }
 } //main(void)

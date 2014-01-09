@@ -3,8 +3,8 @@
 #include "OWIHighLevelFunctions.c"
 #include "OWIcrc.c"
 */
-#include "OWIBitFunctions.h"
-#include "OWIHighLevelFunctions.h"
+#include "OWI/OWIBitFunctions.h"
+#include "OWI/OWIHighLevelFunctions.h"
 #include "temperature.h"
 
 unsigned char celoe, drobnoe;
