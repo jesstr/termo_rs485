@@ -50,7 +50,11 @@ typedef unsigned short WORD;
 //��������� ���������� �� ������������ ������ ��������, ������ ��������
 #define GoTrans1 SetBit(UCSRB,TXEN); SetBit(UCSRB,UDRIE)
 //��������� ���������� �� ������������ ������ ��������, ��������� ��������
-#define StopTrans1 ClrBit(UCSRB,TXEN); ClrBit(UCSRB,UDRIE)
+#define StopTrans1 	do {					\
+					ClrBit(UCSRB,TXEN); 	\
+					ClrBit(UCSRB,UDRIE); 	\
+					D1_OFF;					\
+					} while(0)
 //�������� �� ���������� ���������� ��������
 #define TestTrans1 TestBit(UCSRB,UDRIE)
 

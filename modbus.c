@@ -336,8 +336,8 @@ void StartTrans1(void){
   SWITCH_Transmit;
   
   		D1_ON;
-		_delay_ms(5);
-		D1_OFF;
+		//_delay_ms(5);
+		// D1_OFF;
   
   //_delay_ms(50); //4800
   //_delay_ms(25); //9600
