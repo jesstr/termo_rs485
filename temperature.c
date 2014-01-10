@@ -92,12 +92,11 @@ void Temperature_calc(void)
 }
 
 
-int Temperature_calc1(void)
+long Temperature_calc1(void)
 {	
 	float a;
 	a = (float)((ram[1]<<8) + ram[0])/16;
-	return (int) (a*10);
-		
+	return (long) (a*10);
 }
 
 /*
