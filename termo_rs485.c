@@ -29,13 +29,6 @@ int main(void)
 	MODBUS_Init();
 	StartRec = FALSE;
 	sei();
-//	short unsigned int temperature=5678;
-// 	DisplayBuffer[0]=1;
-// 	DisplayBuffer[1]=2;
-// 	DisplayBuffer[2]=3;
-// 	DisplayBuffer[3]=4;
-	
-	//Animation();
 	
 	SWITCH_Receive;
 	
@@ -49,67 +42,68 @@ int main(void)
 		_delay_us(DISPLAY_UPDATE_DELAY);	
 		if (GetTemperature() != 0xFFFF)
 		{
-
-// 			DisplayBuffer[3]=GRAD;
-// 			DisplayBuffer[0]=(celoe/10)%10;
-// 			DisplayBuffer[1]=celoe%10;
-// 			DisplayBuffer[2]=drobnoe;
-
-// 			Temperature_calc();
-// 			DisplayBuffer[0]=(celoe/10)%10;
-// 			DisplayBuffer[1]=celoe%10;
-// 			DisplayBuffer[2]=GRAD;
-// 			DisplayBuffer[3]=CEL;
-
 			CurrentTemperature = Temperature_calc1();
 			
+			unsigned char i;
+			for (i = 0; i < DIGITS_COUNT; i++) {
+				DisplayBuffer[i] = NONE;
+			}
+
 			switch (display_mode)
 			{	/* TODO wrap this realization to a function or separate file */
-				case 0: 
-				{
-					DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
-					DisplayBuffer[2] = (CurrentTemperature / 10) % 10;
-					DisplayBuffer[3] = CurrentTemperature % 10;
-					if (CurrentTemperature / 100 == 0) {
-						if (CurrentTemperature < 0) {
-							DisplayBuffer[0] = NONE;
-							DisplayBuffer[1] = MINUS;
-						}
-						else {
-							DisplayBuffer[0] = NONE;
-							DisplayBuffer[1] = NONE;
-						}
-					}
-					else if (CurrentTemperature < 0) {
-						DisplayBuffer[0] = MINUS;
-					}
-					else {
-						DisplayBuffer[0] = NONE;
-					}
-				}
+				case 0:
 				case 1:
 				{
-					DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
-					DisplayBuffer[2] = (CurrentTemperature / 10) % 10;
-					DisplayBuffer[3] = GRAD;
-					if (CurrentTemperature / 100 == 0) {
-						if (CurrentTemperature < 0) {
-							DisplayBuffer[0] = NONE;
+					if (CurrentTemperature < 0) {
+						CurrentTemperature = 0 - CurrentTemperature;
+
+						if (CurrentTemperature / 100 == 0) {
 							DisplayBuffer[1] = MINUS;
 						}
 						else {
-							DisplayBuffer[0] = NONE;
-							DisplayBuffer[1] = NONE;
+							DisplayBuffer[0] = MINUS;
+							DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
 						}
 					}
-					else if (CurrentTemperature < 0) {
-						DisplayBuffer[0] = MINUS;
+					else {
+						DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
+					}
+
+					DisplayBuffer[2] = (CurrentTemperature / 10) % 10;
+
+					if (display_mode == 0) {
+						DisplayBuffer[3] = GRAD;
+					}
+					else if (display_mode == 1) {
+						DisplayBuffer[3] = CurrentTemperature % 10;
+					}
+
+					/*
+					if (CurrentTemperature < 0) {
+						CurrentTemperature = 0 - CurrentTemperature;
+
+						if (CurrentTemperature / 100 == 0) {
+							DisplayBuffer[1] = MINUS;
+						}
+						else {
+							DisplayBuffer[0] = MINUS;
+							DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
+						}
 					}
 					else {
-						DisplayBuffer[0] = NONE;
+						DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
 					}
+					DisplayBuffer[2] = (CurrentTemperature / 10) % 10;
+					if (display_mode == 0) {
+					DisplayBuffer[3] = CurrentTemperature % 10;
+					}
+					else if (display_mode == 1) {
+						DisplayBuffer[3] = GRAD;
+					}
+					*/
+
 				}
-			}			
+			}
 		}
 		fTemperature = (float) (CurrentTemperature / 10);
 		ptr = &fTemperature;
@@ -117,6 +111,6 @@ int main(void)
 		AOHR_registers[0] = *ptr++;
 		AOHR_registers[3] = *ptr++;
 		AOHR_registers[2] = *ptr++;
-		MODBUS1();		
+		MODBUS1();
     }
 } //main(void)
