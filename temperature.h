@@ -12,7 +12,7 @@ int GetTemperature(void);
 
 void Temperature_calc(void);
 
-int Temperature_calc1(void);
+long Temperature_calc1(void);
 
 
 
