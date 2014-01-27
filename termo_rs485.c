@@ -57,51 +57,38 @@ int main(void)
 					if (CurrentTemperature < 0) {
 						CurrentTemperature = 0 - CurrentTemperature;
 
-						if (CurrentTemperature / 100 == 0) {
-							DisplayBuffer[1] = MINUS;
-						}
-						else {
+						if (CurrentTemperature / 100 != 0) {
 							DisplayBuffer[0] = MINUS;
 							DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
 						}
+						else {
+							DisplayBuffer[1] = MINUS;
+						}
 					}
 					else {
-						DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
+						if (CurrentTemperature / 100 != 0) {
+							DisplayBuffer[1] = NONE;
+							DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
+						}
+						else {
+							DisplayBuffer[1] = NONE;
+						}
 					}
 
 					DisplayBuffer[2] = (CurrentTemperature / 10) % 10;
 
+					/* Display mode 0: [ |-][1-8][0-9][*]  Example: -10*  */
 					if (display_mode == 0) {
 						DisplayBuffer[3] = GRAD;
+						/* TODO Turn off the dot! */
+						D6_OFF;
 					}
+					/* Display mode 1: [ |-][1-8][0-9].[0-9]  Example: -10.5*  */
 					else if (display_mode == 1) {
 						DisplayBuffer[3] = CurrentTemperature % 10;
+						/* TODO Turn on the dot! */
+						D6_ON;
 					}
-
-					/*
-					if (CurrentTemperature < 0) {
-						CurrentTemperature = 0 - CurrentTemperature;
-
-						if (CurrentTemperature / 100 == 0) {
-							DisplayBuffer[1] = MINUS;
-						}
-						else {
-							DisplayBuffer[0] = MINUS;
-							DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
-						}
-					}
-					else {
-						DisplayBuffer[1] = (CurrentTemperature / 100) % 10;
-					}
-					DisplayBuffer[2] = (CurrentTemperature / 10) % 10;
-					if (display_mode == 0) {
-					DisplayBuffer[3] = CurrentTemperature % 10;
-					}
-					else if (display_mode == 1) {
-						DisplayBuffer[3] = GRAD;
-					}
-					*/
-
 				}
 			}
 		}
