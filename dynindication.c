@@ -3,11 +3,10 @@
 #include <util/delay.h>
 #include "dynindication.h"
 
-unsigned char DisplayBuffer[DIGITS_COUNT] = {0,0,0,0}; //������ ������������ ��������
+unsigned char DisplayBuffer[DIGITS_COUNT] = {0,0,0,0};
 
 void DI_IO_Init(void)
 {
-	//������������� ������ LED-���������
 	a_DDR|=(1<<a_PIN);
 	b_DDR|=(1<<b_PIN);
 	c_DDR|=(1<<c_PIN);
@@ -28,15 +27,13 @@ void DI_IO_Init(void)
 	D3_OFF;
 	D6_OFF;
 	
-	//������������� ������ ��������� DIG1 - DIG4
 	DIG1_DDR|=(1<<DIG1_PIN);
 	DIG2_DDR|=(1<<DIG2_PIN);
 	DIG3_DDR|=(1<<DIG3_PIN);
 	DIG4_DDR|=(1<<DIG4_PIN);
-} //DI_IO_Init(void)
+}
 
 
-//����������� ��������� ����������
 void DI_DrawDisplay(void)
 {
 	unsigned char marker;
@@ -75,4 +72,4 @@ void DI_DrawDisplay(void)
 	}
 	marker=0;
 	//All_OFF;	
-} //DI_DrawDisplay(void)
+}

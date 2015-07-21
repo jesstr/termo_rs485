@@ -10,10 +10,7 @@
 
 int GetTemperature(void);
 
-void Temperature_calc(void);
-
-long Temperature_calc1(void);
-
+long Temperature_calc(void);
 
 
 #endif /* TEMPERATURE_H_ */

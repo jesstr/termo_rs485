@@ -3,10 +3,10 @@
 
 void UART_Init(unsigned int ubrr1)
 {
-	//UBRRH = (unsigned char)(ubrr1>>8);	// ������� ������� ������
+	//UBRRH = (unsigned char)(ubrr1>>8);
 	UBRRL = (unsigned char) ubrr1;
-	UCSRB = (1<<RXEN)|(1<<TXEN); // ���������� �������, �������� �������, ���������� �� ������ ��������
-	UCSRC = (1<<URSEL)|(1<<UCSZ0)|(1<<UCSZ1);	// ����������� �����, 8 ���, 1 ����-���, �������� �������� ����������
+	UCSRB = (1<<RXEN)|(1<<TXEN);
+	UCSRC = (1<<URSEL)|(1<<UCSZ0)|(1<<UCSZ1);
 }
 
 
@@ -27,7 +27,6 @@ void UART_SendString(char *buffer)
 }
 
 /*
-// ��������� ���������� �� ������ ����� �� UART (���������� � ������� ������)
 ISR(USART1_RX_vect)
 {
 	unsigned char buff=UDR1;

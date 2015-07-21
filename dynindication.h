@@ -2,17 +2,15 @@
 #define  DYNINDICATION_H
 
 
-#define DIGITS_COUNT 4 //����� ���������
-#define DIGIT_SWITCH_DELAY 200 //�������� ����� �������������� ���������, ���
-#define DISPLAY_UPDATE_DELAY 10 //�������� ����� ������������ �������, ���
+#define DIGITS_COUNT 4
+#define DIGIT_SWITCH_DELAY 200
+#define DISPLAY_UPDATE_DELAY 10
 
-//����������� ����� ������ ��������
 #define NONE	100;
 #define GRAD	101;
 #define CEL		102;
 #define MINUS	103;
 
-//��������� ����� LED-���������
 #define a_PIN PC5
 #define b_PIN PC4
 #define c_PIN PD2
@@ -26,14 +24,11 @@
 #define D3_PIN PB4
 #define D6_PIN PD6
 
-//��������� ����� ���������
 #define DIG1_PIN PB2
 #define DIG2_PIN PB0
 #define DIG3_PIN PD7
 #define DIG4_PIN PD5
 
-
-//��������� ������ LED-���������
 #define a_PORT PORTC
 #define b_PORT PORTC
 #define c_PORT PORTD
@@ -60,7 +55,6 @@
 #define D3_DDR DDRB
 #define D6_DDR DDRD
 
-//��������� ������ ���������
 #define DIG1_PORT PORTB
 #define DIG2_PORT PORTB
 #define DIG3_PORT PORTD
@@ -72,7 +66,6 @@
 #define DIG4_DDR DDRD
 
 
-//������� ����������� ��������
 #define CH_ONE		All_OFF;\
 					b_ON;\
 					c_ON;
@@ -160,7 +153,6 @@
 #define CH_NONE    All_OFF;		
 
 
-//���������� �������
 #define a_ON a_PORT&=~(1<<a_PIN) 
 #define b_ON b_PORT&=~(1<<b_PIN) 
 #define c_ON c_PORT&=~(1<<c_PIN) 

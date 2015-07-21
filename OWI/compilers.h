@@ -6,7 +6,7 @@
 //
 //  Compiler....: IAR, GCC, CodeVision
 //
-//  Description.: файл для портирования проектов, исходников библиотек
+//  Description.:
 //
 //  Data........: 6.10.10 
 //

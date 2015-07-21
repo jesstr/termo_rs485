@@ -4,25 +4,21 @@
 #include "dynindication.h"
 
 
-// ������� ������ slave-����������
-
 #define AOHR_Num 4
 #define AIR_Num 0
 #define DIC_Num 1
 #define DOC_Num 1
 
-BYTE DOC_registers[DOC_Num]={0}; // 1-9999, Discrete Output Coils (Read-Write) - �������� ������ (1 ���)
+BYTE DOC_registers[DOC_Num]={0}; // 1-9999, Discrete Output Coils (Read-Write)
 
-BYTE DIC_registers[DIC_Num]={0}; // 10001-19999, Discrete Input Contacts (Read-Only) - ���������� ����� (1 ���)
+BYTE DIC_registers[DIC_Num]={0}; // 10001-19999, Discrete Input Contacts (Read-Only)
 
-BYTE AIR_registers[AIR_Num]; // 30001-39999, Analog Input Registers (Read-Only) - �������� ����� (16 ���)
+BYTE AIR_registers[AIR_Num]; // 30001-39999, Analog Input Registers (Read-Only)
 
-BYTE AOHR_registers[AOHR_Num]={0,0,0,0}; // 40001-49999, Analog Output Holding Registers (Read-Write) - �������� �������� (16 ���)
+BYTE AOHR_registers[AOHR_Num]={0,0,0,0}; // 40001-49999, Analog Output Holding Registers (Read-Write)
 
 
-//������� ��� �������� ������� ���� CRC-16
 const BYTE srCRCHi[256]={
-//const BYTE srCRCHi[256]={
          0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0,
          0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
          0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0,
@@ -51,7 +47,6 @@ const BYTE srCRCHi[256]={
          0x80, 0x41, 0x00, 0xC1, 0x81, 0x40
 };
 const BYTE srCRCLo[256]={
-//const BYTE srCRCLo[256]={
          0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2, 0xC6, 0x06,
          0x07, 0xC7, 0x05, 0xC5, 0xC4, 0x04, 0xCC, 0x0C, 0x0D, 0xCD,
          0x0F, 0xCF, 0xCE, 0x0E, 0x0A, 0xCA, 0xCB, 0x0B, 0xC9, 0x09,
@@ -82,37 +77,19 @@ const BYTE srCRCLo[256]={
 
 bool StartRec = FALSE;
 
-//��������� ��������� ���������� ModBus
+
 void MODBUS1(void){  
   
     if (bModBus){
       cNumTrByte1=ModBus(cNumRcByte1);
-
-
 		
-// 		DisplayBuffer[3]=cNumRcByte1%10;
-// 		DisplayBuffer[2]=(cmRcBuf1[0])%10;
-// 		DisplayBuffer[1]=(cmRcBuf1[0]/10)%10;
-// 		DisplayBuffer[0]=(cmRcBuf1[0]/100)%10; 
-		
-/*
-		//��� ������������, ����� �� ����� � ��������� �������� ����������
-	  	LcdWriteCom(0x85);
-		LcdWriteString(IntToStr(AOHR_registers[1], 10));
-		LcdWriteCom(0xC6);
-		LcdWriteData(AOHR_registers[1]);
-	  	AOHR_registers[1]++;
-*/
       if (cNumTrByte1!=0) StartTrans1();
       bModBus=FALSE;
-    }//end if (bModBus)
+    }
   
-}//end MODBUS()
+}
 
 
-//������� ��������� ��� CRC-16
-//�� ����� ��������� �� ������ ������
-//� ���������� ���� ��������� (��� ��������� ���� CRC-16)
 unsigned int GetCRC16(BYTE *buf, BYTE bufsize)
 {
   BYTE CRC_Low = 0xFF;
@@ -125,16 +102,15 @@ unsigned int GetCRC16(BYTE *buf, BYTE bufsize)
     CRC_Low = CRC_High ^ srCRCHi[carry];
     CRC_High = srCRCLo[carry];
    };
-  //return (CRC_High);
   return((CRC_High<<8)|CRC_Low);
-}//end GetCRC16()
+}
 
-//������������ ������ �� ������
+
 char ErrorMessage(char Error){
   unsigned int TempI;
-  cmTrBuf1[1]=cmRcBuf1[1]+0x80;//������� � ������� 
+  cmTrBuf1[1]=cmRcBuf1[1]+0x80;
   cmTrBuf1[2]=Error;
-  TempI=GetCRC16(cmTrBuf1,3);//������� �� �������
+  TempI=GetCRC16(cmTrBuf1,3);
   cmTrBuf1[3]=Low(TempI);
   cmTrBuf1[4]=Hi(TempI);  
   return 5;
@@ -144,135 +120,117 @@ unsigned int CRC16;
 
 
 BYTE ModBus(BYTE NumByte){
-  BYTE RNum=0;  //����� ������ ������� � ������� ������ �������� ������
-  BYTE RSum=0;  //���������� ������������ ����
+  BYTE RNum=0;
+  BYTE RSum=0;
   
 unsigned int TempI=0;
 
-   //����� ������� �� �����
   cmRcBuf1[NumByte]=0x00;
 
-
-  //��������� �������
-  if (cmRcBuf1[0]!=DEVICE_ADDRESS) return 0x00; //����� ����������  //����� �� �����
+  if (cmRcBuf1[0]!=DEVICE_ADDRESS) return 0x00;
  
-  CRC16=GetCRC16(cmRcBuf1,NumByte-2);//������� CRC � �������� �������
-  //	LcdWriteData(CRC16);
+  CRC16=GetCRC16(cmRcBuf1,NumByte-2);
   TempI=(unsigned int) (cmRcBuf1[NumByte-1]<<8) + cmRcBuf1[NumByte-2];  
-  if (CRC16!=TempI) return 0x00;  //����������� ����� //����� �� �����
+  if (CRC16!=TempI) return 0x00;
 		
-  
-  cmTrBuf1[0]=DEVICE_ADDRESS;//����� ����������
-  //��� �������
+  cmTrBuf1[0]=DEVICE_ADDRESS;
   switch(cmRcBuf1[1]){
-    case 0x03:{//������ ���������
+    case 0x03:{
       TempI=(unsigned int) (cmRcBuf1[2]<<8) + cmRcBuf1[3];
-      RNum=TempI;     //��������� ����� ������� ��������, � ������� ������ ��������
-      if (RNum>=0x64){//�������� ������ ��������, ���� ������ 100 ��������� (200 ����)
-        return ErrorMessage(0x02);  //������ ����� �� ����� ���� ���������
+      RNum=TempI;
+      if (RNum>=0x64){
+        return ErrorMessage(0x02);
       }
       TempI=(unsigned int) (cmRcBuf1[4]<<8) + cmRcBuf1[5];
-      RSum=TempI;   //��������� ���������� ������������ ���������
-      if ((RSum>0x64)||((RNum+RSum)>0x64)){//�������� ���-�� ������������� ���������, ���� ������ 100 ��������� ||
-                                           //���� ������ ������ ������ � ����� � ����������� ������������ ����� ������
-                                           // ������ ���������� ��������� �����, �� ����� ������
-                                           return ErrorMessage(0x02); //������ ����� �� ����� ���� ���������
-                                          }
-      cmTrBuf1[1]=0x03;//�������      
+      RSum=TempI;
+      if ((RSum>0x64)||((RNum+RSum)>0x64)) {
+    	  return ErrorMessage(0x02);
+      }
+      cmTrBuf1[1]=0x03;
       
       BYTE i=RSum*2;      
       BYTE j=RNum*2; 
-      cmTrBuf1[2]=i;//���-�� ������������ ���� ������
+      cmTrBuf1[2]=i;
       
-      
-      BYTE n=3;     //�������� �������� � 3-�� �������� ������� /0-������, 1-�������, 2-���-�� ���� ��� CRC/
+      BYTE n=3;
       
       while(i--){
-                 //cmTrBuf1[n++]=MODBUS_MAS[j++];       //����� RNum ������������ ��� ������ ������ ������������ ������ MODBUS_MAS � �����
+                 //cmTrBuf1[n++]=MODBUS_MAS[j++];
 				 cmTrBuf1[n++]=AOHR_registers[j++]; 
-                }                                     //������������ ��� ������ ������� ������������ ������
+                }
       
-      TempI=GetCRC16(cmTrBuf1,n);//������� �� �������
+      TempI=GetCRC16(cmTrBuf1,n);
       cmTrBuf1[n++]=Low(TempI);
       cmTrBuf1[n++]=Hi(TempI); 
       return n;
     }
-    case 0x06:{//������ � ��������� �������
+    case 0x06:{
       TempI=(unsigned int) (cmRcBuf1[2]<<8) + cmRcBuf1[3];
       RNum=TempI;
-      if (RNum>=0x64){ //�������� ������ ��������, ���� ������ 100 ���������
-                       return ErrorMessage(0x02); //������ ����� �� ����� ���� ���������
+      if (RNum>=0x64){
+                       return ErrorMessage(0x02);
                      }
       TempI=(unsigned int) (cmRcBuf1[4]<<8) + cmRcBuf1[5];      
-      BYTE c=RNum*2;   //� MODBUS ���� ������� ��� ��� �����, ������� ��� ��������� ������� ���������� ����� 
-      //MODBUS_MAS[c++]=Hi(TempI);    //����� ������ � MODBUS_MAS
+      BYTE c=RNum*2;
+      //MODBUS_MAS[c++]=Hi(TempI);
       //MODBUS_MAS[c]=Low(TempI);
-      AOHR_registers[c++]=Hi(TempI);    //����� ������ � AOHR_registers
+      AOHR_registers[c++]=Hi(TempI);
 	  AOHR_registers[c]=Low(TempI);
 	  
-	  
-      //WriteMODBUS_MAS_ToEEPROM();   //����� ������ � EEPROM
-      //ReadSettings();      //��������� ����������, ��� �� EEPROM                 
-      
-      cmTrBuf1[1]=cmRcBuf1[1];//�������
-      cmTrBuf1[2]=cmRcBuf1[2];//�����
-      cmTrBuf1[3]=cmRcBuf1[3];//
-      cmTrBuf1[4]=cmRcBuf1[4];//������
-      cmTrBuf1[5]=cmRcBuf1[5];//
-      cmTrBuf1[6]=cmRcBuf1[6];//��
-      cmTrBuf1[7]=cmRcBuf1[7];//
+      cmTrBuf1[1]=cmRcBuf1[1];
+      cmTrBuf1[2]=cmRcBuf1[2];
+      cmTrBuf1[3]=cmRcBuf1[3];
+      cmTrBuf1[4]=cmRcBuf1[4];
+      cmTrBuf1[5]=cmRcBuf1[5];
+      cmTrBuf1[6]=cmRcBuf1[6];
+      cmTrBuf1[7]=cmRcBuf1[7];
       return 8;
     }
     
-    case 0x10:{//������ � ��������� ���������
+    case 0x10:{
       TempI=(unsigned int) (cmRcBuf1[2]<<8) + cmRcBuf1[3];
       RNum=TempI;
-      if (RNum>=0x64){ //�������� ������ ��������, ���� ������ 100 ���������
-         return ErrorMessage(0x02); //������ ����� �� ����� ���� ���������
+      if (RNum>=0x64){
+         return ErrorMessage(0x02);
       }
       
       TempI=(unsigned int) (cmRcBuf1[4]<<8) + cmRcBuf1[5];
-      RSum=TempI;   //��������� ���������� ���������� ���������
-      if ((RSum>0x64)||((RNum+RSum)>0x64)){//�������� ���-�� ������������� ���������, ���� ������ 100 ��������� ||
-                                           //���� ������ ������ ������ � ����� � ����������� ������������ ����� ������
-                                           // ������ ���������� ��������� �����, �� ����� ������
-                                           return ErrorMessage(0x02); //������ ����� �� ����� ���� ���������
-                                          }
+      RSum=TempI;
+      if ((RSum>0x64)||((RNum+RSum)>0x64)){
+    	  return ErrorMessage(0x02);
+      }
       
       
-      TempI=(unsigned int) cmRcBuf1[6];   //���������� ���������� ���� 
-      BYTE BSum=TempI;    //��������� ���������� ���������� ������ ��� ������������� ��� ���������� ������� ������
+      TempI=(unsigned int) cmRcBuf1[6];
+      BYTE BSum=TempI;
       
-      BYTE n=7;     //������ �������� � 7-�� �������� ������� /0-������, 1-�������, 2,3-����� ��������, 4,5-���.�� ���������, 6-���.�� ����
+      BYTE n=7;
       
       while(BSum--){
-                    //MODBUS_MAS[RNum++]=cmRcBuf1[n++];    //�������� ������ ������� MODBUS_MAS
-					AOHR_registers[RNum++]=cmRcBuf1[n++];    //�������� ������ ������� AOHR_registers
-                   } 
-      //WriteMODBUS_MAS_ToEEPROM();   //����� ������ � EEPROM
-      //ReadSettings();      //��������� ����������, ��� �� EEPROM
+		//MODBUS_MAS[RNum++]=cmRcBuf1[n++];
+		AOHR_registers[RNum++]=cmRcBuf1[n++];
+      }
       
-      cmTrBuf1[1]=cmRcBuf1[1];//�������
-      cmTrBuf1[2]=cmRcBuf1[2];//�����
-      cmTrBuf1[3]=cmRcBuf1[3];//
-      cmTrBuf1[4]=cmRcBuf1[4];//���������� ���������� ���������      
-      cmTrBuf1[5]=cmRcBuf1[5];//      
-      TempI=GetCRC16(cmTrBuf1,6);//������� �� �������      
+      cmTrBuf1[1]=cmRcBuf1[1];
+      cmTrBuf1[2]=cmRcBuf1[2];
+      cmTrBuf1[3]=cmRcBuf1[3];
+      cmTrBuf1[4]=cmRcBuf1[4];
+      cmTrBuf1[5]=cmRcBuf1[5];
+      TempI=GetCRC16(cmTrBuf1,6);
       cmTrBuf1[6]=Low(TempI);
-      cmTrBuf1[7]=Hi(TempI); 
+      cmTrBuf1[7]=Hi(TempI);
       return 8;
     }
     
     
     
     default:{
-       return ErrorMessage(0x01); //������������ �������
+       return ErrorMessage(0x01);
     }
   }
-}//end ModBus()
+}
 
 
-//��������� UART
 void MODBUS_Init(void){  
 
   UART_Init(MYUBRR);
@@ -281,39 +239,37 @@ void MODBUS_Init(void){
   EnableReceive1;
   InitTimer2;
   StartTimer2;
-}//end void StartUART0()
+}
 
 char cTempUART;
 
-//����� ���������� ������ UART 
+
 ISR(USART_RXC_vect){
 	
   cTempUART=UDR;
   
+  if  (UCSRA&(1<<FE)) return;
 
-  if  (UCSRA&(1<<FE)) return;   //FE-������ �����, OVR - ������������ ������ (�����)
-
-
-  if (!StartRec){ //���� ��� ������ ����, �� �������� �����
+  if (!StartRec){
       StartRec=TRUE;
       RcCount=0;
       DataPause=0;
       cmRcBuf1[RcCount++]=cTempUART;
       StartTimer2;
   }
-  else{// end if (StartRec==0) //���������� �����
-    if (RcCount<MaxLenghtRecBuf){//���� ��� �� ����� ������
-      cmRcBuf1[RcCount++]=cTempUART;
-    }else{//����� ����������
-      cmRcBuf1[MaxLenghtRecBuf-1]=cTempUART;
-    }
-    DataPause=0;
-    TCNT2=dTCNT2;//���������� �������
-  }//end else if (StartRec==0)
-}//end  __interrupt UART0_RX_interrupt()
+  else {
+	  if (RcCount<MaxLenghtRecBuf) {
+		  cmRcBuf1[RcCount++]=cTempUART;
+	  }
+	  else {
+		  cmRcBuf1[MaxLenghtRecBuf-1]=cTempUART;
+	  }
+	  DataPause=0;
+	  TCNT2=dTCNT2;
+  }
+}
 
 
-//����� ���������� �������� � ����� UART
 ISR(USART_UDRE_vect){
   if (TrCount<cNumTrByte1){
     UDR=cmTrBuf1[TrCount];
@@ -326,32 +282,25 @@ ISR(USART_UDRE_vect){
     StopTrans1;
 	TrCount=0;
   }
-}//end __interrupt UART0_UDRE_interrupt()
+}
 
 
-//���������� �������� �� UART, � ��������� ��-�� ������������ ������
 void StartTrans1(void){
-  //		LcdWriteData('S');					//
   TrCount=0;
   SWITCH_Transmit;
-  
-  		D1_ON;
-		//_delay_ms(5);
-		// D1_OFF;
-  
   //_delay_ms(50); //4800
   //_delay_ms(25); //9600
   _delay_ms(5);
   GoTrans1;
-}//end  void StartTrans1()
+}
 
 
- //����� ���������� �������/�������� 2 �� ������������
 ISR(TIMER2_OVF_vect){
   if (StartRec){
-    StartRec=FALSE; //������� �������
-    cNumRcByte1=RcCount;  //���-�� �������� ����
-    bModBus=TRUE;//
-    TCCR2=0;//��������� ������  
+    StartRec=FALSE;
+    cNumRcByte1=RcCount;
+    bModBus=TRUE;
+    D1_ON;
+    TCCR2=0;
   }
-}//end __interrupt void Timer2_overflowed_interrupt()
+}
